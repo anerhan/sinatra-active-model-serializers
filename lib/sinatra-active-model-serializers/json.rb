@@ -10,6 +10,17 @@ module Sinatra
     def json(object, options={})
       options = options.merge(settings.active_model_serializers)
 
+      begin
+        options[:root] =
+          if options[:root].is_a?(Boolean) && options[:root] == false
+            false
+          elsif object.is_a?(Mongoid::Criteria)
+            options[:each_serializer] = options[:serializer]
+            object.first.class.name.underscore.pluralize if options[:root] == true
+          end
+        rescue LoadError
+      end
+
       serializer = ActiveModel::Serializer.serializer_for(object, options)
 
       if serializer
