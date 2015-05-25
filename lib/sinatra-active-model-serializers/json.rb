@@ -9,7 +9,7 @@ module Sinatra
 
     def json(object, options={})
       options = options.merge(settings.active_model_serializers)
-
+      options[:root] = options[:root].nil?
       begin
         options[:root] =
           if options[:root].is_a?(Boolean) && options[:root] == false
